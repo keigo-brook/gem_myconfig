@@ -1,11 +1,11 @@
 require 'mygem'
 require 'mygem/command'
 
-module Mygem 
-    class Command < Thor
-        desc 'f', 'f'
-        def f
-            puts 21
-        end
+module Mygem
+  class Command < Thor
+    desc 'hello', 'Say Hello!'
+    def hello
+      puts 'Hello!'
     end
+  end
 end

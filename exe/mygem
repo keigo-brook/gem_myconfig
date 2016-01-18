@@ -1,1 +1,2 @@
-puts 'fuck'
+require 'mygem'
+Mygem::Command.start
