@@ -24,8 +24,6 @@ module Mygem
           puts 'Invalid Name. please try again:'
         end
       end
-
-      Mygem.save_config
       puts "Update Your name to [#{Mygem.config[:name]}]."
     end
   end

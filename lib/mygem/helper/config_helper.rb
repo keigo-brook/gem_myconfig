@@ -11,20 +11,11 @@ module Mygem
 
   # Configure through hash
   def self.configure(opts = {})
-    opts.each { |k, v| @config[k.to_sym] = v if @valid_config_keys.include? k.to_sym }
-  end
-
-  # Configure through yaml file
-  def self.configure_with(path_to_yaml_file)
-    begin
-      config = YAML::load(IO.read(path_to_yaml_file))
-    rescue Errno::ENOENT
-      puts " YAML configuration file couldn 't be found. Using defaults."; return
-    rescue Psych::SyntaxError
-      puts "YAML configuration file contains invalid syntax. Using defaults."; return
+    self.config
+    opts.each do |k, v|
+      @config[k.to_sym] = v if @valid_config_keys.include? k.to_sym
     end
-
-    configure(config)
+    self.save_config
   end
 
   def self.get_config_path
@@ -37,20 +28,22 @@ module Mygem
     end
   end
 
-  # configをyamlから取得
+  # configをyamlから@cofigに取得,
   def self.config
-    yml_path = get_config_path + '/settings.yml '
-    configure_with(yml_path)
-    @config
+    yml_path = get_config_path + '/settings.yml'
+    yml_file = YAML.load_file(yml_path)
+    if yml_file
+      @config = yml_file
+    else
+      File.open(yml_path, 'w') { |f| YAML.dump(@config, f) }
+    end
   end
 
   # 現在の@configをyamlに保存
   def self.save_config
-    yml_path = get_config_path + '/settings.yml '
+    yml_path = get_config_path + '/settings.yml'
     if File.exists?(yml_path)
-      f = File.open(yml_path, 'w')
-      f.print(@config.to_yaml)
-      f.close
+      File.open(yml_path, 'w') { |f| YAML.dump(@config, f) }
     else
       raise "Can't find #{yml_path}. please set configure."
     end
